@@ -3,7 +3,6 @@ import type { AxiosResponse, AxiosError } from "axios";
 import { showToast } from "../components/ToastProvider";
 
 
-let injectedStore: any = null;
 
 export const attachStore = (store: any) => {
   injectedStore = store;
