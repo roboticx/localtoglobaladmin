@@ -2,7 +2,7 @@ import axios from "axios";
 import type { AxiosResponse, AxiosError } from "axios";
 import { showToast } from "../components/ToastProvider";
 
-
+let injectedStore: any;
 
 export const attachStore = (store: any) => {
   injectedStore = store;
