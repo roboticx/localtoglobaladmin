@@ -1,16 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { DELETE, FETCH, PATCH } from '../utils/apiUtils';
-type subdoamin = {
-    _id: string;
-    name: string;
-    price: string;
-    durationDays: string;
-    offerPriceMonthly: string;
-    offerPriceAnnual: string;
-    isActive: boolean;
-    user?: string;
-};
+
 type Subdomain = {
   _id: string;
   subdomain: string;
