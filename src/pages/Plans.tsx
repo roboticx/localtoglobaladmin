@@ -13,6 +13,7 @@ type Plan = {
     user?: string;
 };
 const Plans = () => {
+    const [isOpenConfirmModal, setIsOpenConfirmModal] = useState('')
     const [plans, setPlans] = useState<Plan[]>([]);
     const [isOpen, setIsOpen] = useState(false);
     const [editId, setEditId] = useState<string | null>(null);
@@ -36,36 +37,36 @@ const Plans = () => {
             console.log(error);
         }
     }
-const submitPlan = async () => {
-    try {
-        const formattedData = {
-            ...plansData,
-            price: Number(plansData.price),
-            durationDays: Number(plansData.durationDays),
-            offerPriceMonthly: Number(plansData.offerPriceMonthly),
-            offerPriceAnnual: Number(plansData.offerPriceAnnual),
-        };
+    const submitPlan = async () => {
+        try {
+            const formattedData = {
+                ...plansData,
+                price: plansData.price,
+                durationDays: plansData.durationDays,
+                offerPriceMonthly: plansData.offerPriceMonthly,
+                offerPriceAnnual: plansData.offerPriceAnnual
+            };
 
-        if (editId) {
-            await PATCH({
-                url: `/plans/admin/${editId}`,
-                data: formattedData,
-                toast: true,
-            });
-        } else {
-            await POST({
-                url: "/plans/admin",
-                data: formattedData,
-                toast: true,
-            });
+            if (editId) {
+                await PATCH({
+                    url: `/plans/admin/${editId}`,
+                    data: formattedData,
+                    toast: true,
+                });
+            } else {
+                await POST({
+                    url: "/plans/admin",
+                    data: formattedData,
+                    toast: true,
+                });
+            }
+
+            setIsOpen(false);
+            getplans();
+        } catch (error) {
+            console.error(error);
         }
-
-        setIsOpen(false);
-        getplans();
-    } catch (error) {
-        console.error(error);
-    }
-};
+    };
     const openAddModal = () => {
         setEditId(null);
         setPlansData({
@@ -86,6 +87,7 @@ const submitPlan = async () => {
             offerPriceMonthly: plan.offerPriceMonthly,
             offerPriceAnnual: plan.offerPriceAnnual,
         });
+        console.log(plansData, plan)
         setIsOpen(true);
     };
     const deletePlans = async (_id: string) => {
@@ -95,22 +97,24 @@ const submitPlan = async () => {
                 toast: true,
             });
             getplans()
+            setIsOpenConfirmModal('')
         } catch (error) {
             console.log(error);
         }
     }
     const toggleStatus = async (_id: string, currentStatus: boolean) => {
         try {
-            setPlans((prev) =>
-                prev.map((p) =>
-                    p._id === _id ? { ...p, isActive: !currentStatus } : p
-                )
-            );
+
             await PATCH({
                 url: `/plans/admin/${_id}/status`,
                 data: { isActive: !currentStatus },
                 toast: true,
             });
+            setPlans((prev) =>
+                prev.map((p) =>
+                    p._id === _id ? { ...p, isActive: !currentStatus } : p
+                )
+            );
         } catch (error) {
             console.log(error);
             getplans();
@@ -170,18 +174,18 @@ const submitPlan = async () => {
                                     </td>
                                     <td className="px-6 py-4 text-gray-700 text-center">
                                         <div className="flex items-center gap-1">
-                                            <IndianRupee size={16} className={`text-gray-400 ${el.price?"block":"hidden"}`} />
+                                            <IndianRupee size={16} className={`text-gray-400 ${el.price ? "block" : "hidden"}`} />
                                             <span>{el.price}</span>
                                         </div>
                                     </td>
-                                     <td className="px-6 py-4 text-gray-700 ">
+                                    <td className="px-6 py-4 text-gray-700 ">
                                         <div className="flex items-center gap-1">
-                                            <IndianRupee size={16} className={`text-gray-400 ${el.offerPriceMonthly?"block":"hidden"}`} />
+                                            <IndianRupee size={16} className={`text-gray-400 ${el.offerPriceMonthly ? "block" : "hidden"}`} />
                                             <span>{el.offerPriceMonthly}</span>
                                         </div>
                                     </td> <td className="px-6 py-4 text-gray-700 ">
                                         <div className="flex items-center gap-1">
-                                            <IndianRupee size={16} className={`text-gray-400 ${el.offerPriceAnnual?"block":"hidden"}`} />
+                                            <IndianRupee size={16} className={`text-gray-400 ${el.offerPriceAnnual ? "block" : "hidden"}`} />
                                             <span>{el.offerPriceAnnual}</span>
                                         </div>
                                     </td>
@@ -201,7 +205,7 @@ const submitPlan = async () => {
                                     <td className=" py-4 flex  gap-2 ">
                                         <button className='bg-blue-600 rounded-md px-3 py-1 text-white' onClick={() => { openEditModal(el); }}>Update</button>
                                         <button className='bg-red-600 rounded-md px-3 py-1 text-white'
-                                            onClick={() => deletePlans(el._id)}
+                                            onClick={() => setIsOpenConfirmModal(el._id)}
                                         >Delete</button>
 
                                     </td>
@@ -233,23 +237,23 @@ const submitPlan = async () => {
                         <div className="mt-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Plan Name</label>
-                                <input type="text" name="planName" id="planName" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" onChange={(e) => setPlansData({ ...plansData, name: e.target.value })} />
+                                <input type="text" name="planName" id="planName" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" defaultValue={plansData.name} onChange={(e) => setPlansData({ ...plansData, name: e.target.value })} />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Plan Price</label>
-                                <input type="text" name="planPrice" id="planPrice" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" onChange={(e) => setPlansData({ ...plansData, price: e.target.value })} />
+                                <input type="text" name="planPrice" id="planPrice" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" defaultValue={plansData.price} onChange={(e) => setPlansData({ ...plansData, price: e.target.value })} />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Plan Duration Days</label>
-                                <input type="text" name="planDurationDays" id="planDurationDays" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" onChange={(e) => setPlansData({ ...plansData, durationDays: e.target.value })} />
+                                <input type="text" name="planDurationDays" id="planDurationDays" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" defaultValue={plansData.durationDays} onChange={(e) => setPlansData({ ...plansData, durationDays: e.target.value })} />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Plan Offer Price Monthly</label>
-                                <input type="text" name="planOfferPriceMonthly" id="planOfferPriceMonthly" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" onChange={(e) => setPlansData({ ...plansData, offerPriceMonthly: e.target.value })} />
+                                <input type="text" name="planOfferPriceMonthly" id="planOfferPriceMonthly" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" defaultValue={plansData.offerPriceMonthly} onChange={(e) => setPlansData({ ...plansData, offerPriceMonthly: e.target.value })} />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Plan Offer Price Annual</label>
-                                <input type="text" name="planOfferPriceAnnual" id="planOfferPriceAnnual" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" onChange={(e) => setPlansData({ ...plansData, offerPriceAnnual: e.target.value })} />
+                                <input type="text" name="planOfferPriceAnnual" id="planOfferPriceAnnual" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" defaultValue={plansData.offerPriceAnnual} onChange={(e) => setPlansData({ ...plansData, offerPriceAnnual: e.target.value })} />
                             </div>
                         </div>
                         <div className="mt-6 flex flex-col gap-3">
@@ -261,6 +265,41 @@ const submitPlan = async () => {
                             </button>
                             <button
                                 onClick={() => setIsOpen(false)}
+                                className="rounded-lg px-4 w-full py-2 text-sm bg-gray-300 font-medium text-gray-700 hover:bg-gray-100 transition-colors">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+            {isOpenConfirmModal &&
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-x-hidden overflow-y-auto">
+                    <div
+                        className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"
+
+                    />
+                    <div className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                        <div className="flex items-center justify-between border-b border-gray-300 pb-3">
+                            <h3 className="text-lg font-semibold text-gray-900">
+                                Are you sure want to delete this plan?
+                            </h3>
+                            <button
+                                onClick={() => setIsOpenConfirmModal('')}
+                                className="text-gray-400 hover:text-gray-600 transition-colors"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <div className="mt-6 flex  gap-4">
+                            <button
+                                onClick={() => deletePlans(isOpenConfirmModal)}
+                                className="rounded-lg w-full bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors"
+                            >
+                                {"Yes, Delete Plan"}
+                            </button>
+                            <button
+                                onClick={() => setIsOpenConfirmModal('')}
                                 className="rounded-lg px-4 w-full py-2 text-sm bg-gray-300 font-medium text-gray-700 hover:bg-gray-100 transition-colors">
                                 Cancel
                             </button>

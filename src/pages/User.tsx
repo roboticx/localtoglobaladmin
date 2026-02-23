@@ -4,6 +4,7 @@ import  { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { FETCH, PATCH } from "../utils/apiUtils";
 import { Mail, Phone } from "lucide-react";
+import { showToast } from "../components/ToastProvider";
 interface UserType {
     _id: string;
     name: string;
@@ -21,39 +22,57 @@ const User = () => {
         try {
             const res = await FETCH({
                 url: "/auth/admin/users",
-                toast: true,
             });
             setUsers(res.data as UserType[]);
+            showToast({
+      type: "success",
+      message: "Users loaded successfully",
+    });
         } catch (error) {
             console.error(error);
         }
     };
 
-    const toggleStatus = async (_id: string, currentStatus: boolean) => {
-        try {
-            if (currentStatus) {
-                await PATCH({
-                    url: `/auth/admin/${_id}/deactivate`,
-                    toast: true,
-                });
-            } else {
-                await PATCH({
-                    url: `/auth/admin/${_id}/activate`,
-                    toast: true,
-                });
-            }
+ const toggleStatus = async (_id: string, currentStatus: boolean) => {
+  try {
+    if (currentStatus) {
+      await PATCH({
+        url: `/auth/admin/${_id}/deactivate`,
+      });
 
-            setUsers(prev =>
-                prev.map(user =>
-                    user._id === _id
-                        ? { ...user, isActive: !currentStatus }
-                        : user
-                )
-            );
-        } catch (error) {
-            console.error(error);
-        }
-    };
+      showToast({
+        type: "warning",
+        message: "User deactivated",
+      });
+
+    } else {
+      await PATCH({
+        url: `/auth/admin/${_id}/activate`,
+      });
+
+      showToast({
+        type: "success",
+        message: "User activated",
+      });
+    }
+
+    setUsers(prev =>
+      prev.map(user =>
+        user._id === _id
+          ? { ...user, isActive: !currentStatus }
+          : user
+      )
+    );
+
+  } catch (error: any) {
+    console.error(error);
+
+    showToast({
+      type: "error",
+      message: error?.response?.data?.message || "Something went wrong",
+    });
+  }
+};
 
     useEffect(() => {
         getUserData();
