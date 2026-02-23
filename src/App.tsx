@@ -12,29 +12,25 @@ import Plans from './pages/Plans'
 import Subdomains from './pages/Subdomains'
 import Subscriptions from './pages/Subscriptions'
 import Transactions from './pages/Transactions'
+import PrivateLayout from './components/PrivateLayout'
 const App = () => {
   return (
-    <div className="text-red-900 flex min-h-screen w-full">
-      <Sidebar />
+    <Routes>
+      {/* 🔓 Public Route */}
+      <Route path="/login" element={<Login />} />
 
-      <div className="flex-1 flex flex-col ">
-        <Header />
-
-        <div className="">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/settings" element={<Setting />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/user" element={<User/>} />
-            <Route path="/plans" element={<Plans/>} />
-            <Route path="/subdomains" element={<Subdomains/>} />
-            <Route path="/subscription" element={<Subscriptions/>} />
-            <Route path="/transactions" element={<Transactions/>} />
-          </Routes>
-        </div>
-      </div>
-    </div>
+      {/* 🔐 Private Routes */}
+      <Route element={<PrivateLayout />}>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/settings" element={<Setting />} />
+        <Route path="/user" element={<User />} />
+        <Route path="/plans" element={<Plans />} />
+        <Route path="/subdomains" element={<Subdomains />} />
+        <Route path="/subscription" element={<Subscriptions />} />
+        <Route path="/transactions" element={<Transactions />} />
+      </Route>
+    </Routes>
   )
 }
 

@@ -3,6 +3,7 @@
 import  { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { FETCH, PATCH } from "../utils/apiUtils";
+import { Mail, Phone } from "lucide-react";
 interface UserType {
     _id: string;
     name: string;
@@ -75,6 +76,7 @@ const User = () => {
                         <tr className="text-left text-sm font-semibold uppercase">
                             <th className="px-6 py-3">Sr.No</th>
                             <th className="px-6 py-3">Name</th>
+                            <th className="px-6 py-3">Number</th>
                             <th className="px-6 py-3">Email</th>
                             <th className="px-6 py-3">Role</th>
                             <th className="px-6 py-3">Status</th>
@@ -90,13 +92,25 @@ const User = () => {
                                     }`}>
                                 <td className="px-6 py-4">{idx + 1}</td>
                                 <td className="px-6 py-4">{el.name}</td>
-                                <td className="px-6 py-4">{el.email}</td>
+                              <td className="px-6 py-4">
+  <div className="flex items-center gap-2">
+    <Phone size={16} className="text-gray-400" />
+    <span>{el.mobileNo}</span>
+  </div>
+</td>
+
+<td className="px-6 py-4">
+  <div className="flex items-center gap-2">
+    <Mail size={16} className="text-gray-400" />
+    <span>{el.email}</span>
+  </div>
+</td>
                                 <td className="px-6 py-4">{el.role}</td>
                                 <td className="px-6 py-4">
                                     <button
                                         onClick={() => toggleStatus(el._id, el.isActive)}
                                         className={`relative inline-flex h-7 w-14 rounded-full transition-colors duration-300
-                                        ${el.isActive ? "bg-black/90" : "bg-gray-400"}`}>
+                                        ${el.isActive ? "bg-[#8CAD8A]" : "bg-[#F77376]"}`}>
                                         <span
                                             className={`absolute left-1 top-1 h-5 w-5 rounded-full bg-white shadow-md transition-transform duration-300
                                             ${el.isActive ? "translate-x-7" : "translate-x-0"}`}/>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { FETCH} from '../utils/apiUtils';
+import { IndianRupee } from 'lucide-react';
 const Transactions = () => {
     const [Transactions, setTransactions] = useState<any>([]);
     const theme = useSelector((state: any) => state.theme.theme);
@@ -47,14 +48,11 @@ const Transactions = () => {
           <th className="px-6 py-4 text-xs ">#</th>
           <th className="px-6 py-4 text-xm ">Name</th>
           <th className="px-6 py-4 text-xm ">Email</th>
-          <th className="px-6 py-4 text-xm ">Mobile</th>
-          <th className="px-6 py-4 text-xm ">Monthly Offer</th>
-          <th className="px-6 py-4 text-xm ">Annual Offer</th>
           <th className="px-6 py-4 text-xm ">Plan Name</th>
           <th className="px-6 py-4 text-xm ">Price</th>
-          <th className="px-6 py-4 text-xm ">Duration (Days)</th>
-          <th className="px-6 py-4 text-xm text-center">Active</th>
           <th className="px-6 py-4 text-xm text-center">Amount</th>
+          <th className="px-6 py-4 text-xm text-center">subscription</th>
+          <th className="px-6 py-4 text-xm text-center">transactionID</th>
           <th className="px-6 py-4 text-xm text-center">Payment</th>
           <th className="px-6 py-4 text-xm text-center">Status</th>
         </tr>
@@ -77,48 +75,39 @@ const Transactions = () => {
             <td className="px-6 py-4 text-sm opacity-80">
               {el.user.email}
             </td>
-            <td className="px-6 py-4">
-              {el.user.mobileNo}
-            </td>
-            <td className="px-6 py-4">
-              ₹{el.plan.offerPriceMonthly}
-            </td>
-            <td className="px-6 py-4">
-              ₹{el.plan.offerPriceAnnual}
-            </td>
             <td className="px-6 py-4 font-semibold">
               {el.plan.name}
             </td>
-            <td className="px-6 py-4">
-              ₹{el.plan.price}
-            </td>
-            <td className="px-6 py-4">
-              {el.plan.durationDays}
-            </td>
-            <td className="px-6 py-4 text-center">
-              <span
-                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
-                  el.plan.isActive
-                    ? "bg-green-100 text-green-700"
-                    : "bg-red-100 text-red-700"
-                }`}>
-                {String(el.plan.isActive)}
-              </span>
-            </td>
-            <td className="px-6 py-4 text-center font-semibold">
-              ₹{el.amount}
+          <td className="px-6 py-4">
+  <div className="flex items-center">
+    <IndianRupee size={14} className="text-gray-500" />
+    <span>{el.plan.price}</span>
+  </div>
+</td>
+
+<td className="px-6 py-4 text-center font-semibold">
+  <div className="flex items-center justify-center">
+    <IndianRupee size={14} className="text-gray-500" />
+    <span>{el.amount}</span>
+  </div>
+</td>
+             <td className="px-6 py-4 text-center font-semibold">
+              {el.subscription?`₹ ${el.subscription}`:"N/A"}
             </td>
             <td className="px-6 py-4 text-center capitalize">
+              {el.transactionID}
+            </td> <td className="px-6 py-4 text-center capitalize">
               {el.paymentMethod}
             </td>
             <td className="px-6 py-4 text-center">
               <span
                 className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                  el.status === "success"
+                  el.status === "SUCCESS"
                     ? "bg-emerald-100 text-emerald-700"
-                    : el.status === "failed"
+                    : el.status === "FAILED"
                     ? "bg-red-100 text-red-700"
-                    : "bg-yellow-100 text-yellow-700"
+                    :el.status ==="PENDING"?
+                    "bg-yellow-100 text-yellow-700":""
                 }`}>
                 {el.status}
               </span>

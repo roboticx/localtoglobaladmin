@@ -26,12 +26,14 @@ const navItems: NavItem[] = [
 { id: "subscription", label: "Subscription", icon: Repeat, path: "/subscription" },{ id: "transactions", label: "Transactions", icon: ArrowLeftRight, path: "/transactions" }
 
 ];
+const tokken= localStorage.getItem('token')
+
 const Sidebar: React.FC = () => {
   const theme = useSelector((state: any) => state.theme.theme);
   const isLight = theme === "light";
   return (
     <aside
-      className={`flex h-screen w-72 flex-col border-r p-6 shadow-2xl
+      className={`${tokken?"flex":"hidden"} h-screen w-72 flex-col border-r p-6 shadow-2xl
         ${isLight
           ? "bg-white border-gray-200 text-gray-700"
           : "bg-[#0f172a] border-white/10 text-slate-300"
@@ -46,7 +48,7 @@ const Sidebar: React.FC = () => {
           className={`text-xl font-bold tracking-tight ${isLight ? "text-gray-900" : "text-white"
             }`}
         >
-          Nexus Core
+          LocalToGlobal
         </span>
       </div>
       <nav className="flex-1 space-y-2">

@@ -16,9 +16,10 @@ const Header: React.FC = () => {
   const theme = useSelector((state: any) => state.theme.theme);
   const userRole =localStorage.getItem("role");
   const userName =localStorage.getItem("name");
+  const tokken= localStorage.getItem('token')
   return (
     <header
-      className={`
+      className={`${tokken?"block":"hidden"}
         sticky top-0 z-40 w-full border-b border-white/10 backdrop-blur-md px-8 py-3
         ${theme === "light" ? "bg-white" : "bg-[#0f172a]/80"}
       `}>
@@ -54,10 +55,7 @@ const Header: React.FC = () => {
               className="p-2 rounded-lg text-slate-400 hover:bg-white/5 hover:text-gray-300 transition-all">
               {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
             </button>
-            <button className="relative p-2 rounded-lg text-slate-400 hover:bg-white/5 hover:text-gray-300 transition-all">
-              <Bell size={20} />
-              <span className="absolute top-2 right-2.5 h-2 w-2 rounded-full bg-indigo-500 border-2 border-[#0f172a]" />
-            </button>
+          
           </div>
           <button className="flex items-center gap-3 pl-2 group">
             <div className="text-right hidden sm:block">
