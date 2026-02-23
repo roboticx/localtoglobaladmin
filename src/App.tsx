@@ -1,23 +1,28 @@
-import { Routes, Route } from 'react-router-dom'
-import Sidebar from './components/Sidebar'
-import Header from './components/Header'
+import { Routes, Route } from "react-router-dom";
+import Dashboard from "./pages/Dashboard";
+import Setting from "./pages/Setting";
+import Profile from "./pages/Profile";
+import Login from "./pages/Login";
+import User from "./pages/User";
+import Plans from "./pages/Plans";
+import Subdomains from "./pages/Subdomains";
+import Subscriptions from "./pages/Subscriptions";
+import Transactions from "./pages/Transactions";
+import PrivateLayout from "./components/PrivateLayout";
+import PublicRoute from "./components/PublicRoute";
 
-// pages
-import Dashboard from './pages/Dashboard'
-import Setting from './pages/Setting'
-import Profile from './pages/Profile'
-import Login from './pages/Login'
-import User from './pages/User'
-import Plans from './pages/Plans'
-import Subdomains from './pages/Subdomains'
-import Subscriptions from './pages/Subscriptions'
-import Transactions from './pages/Transactions'
-import PrivateLayout from './components/PrivateLayout'
 const App = () => {
   return (
     <Routes>
-      {/* 🔓 Public Route */}
-      <Route path="/login" element={<Login />} />
+      {/* 🚫 Prevent logged-in users from accessing login */}
+      <Route
+        path="/login"
+        element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        }
+      />
 
       {/* 🔐 Private Routes */}
       <Route element={<PrivateLayout />}>
@@ -31,7 +36,7 @@ const App = () => {
         <Route path="/transactions" element={<Transactions />} />
       </Route>
     </Routes>
-  )
-}
+  );
+};
 
-export default App
+export default App;

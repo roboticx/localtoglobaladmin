@@ -3,6 +3,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 
+
 const PrivateLayout = () => {
   return (
     <ProtectedRoute>

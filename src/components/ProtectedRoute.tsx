@@ -1,14 +1,22 @@
-import type { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
 
 interface Props {
   children: ReactNode;
 }
 
 const ProtectedRoute = ({ children }: Props) => {
-  const token = localStorage.getItem("token");
+  const [isAuth, setIsAuth] = useState<boolean | null>(null);
 
-  if (!token) {
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsAuth(!!token);
+  }, []);
+
+  if (isAuth === null) return null; // prevent flicker
+
+  if (!isAuth) {
     return <Navigate to="/login" replace />;
   }
 
