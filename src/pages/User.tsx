@@ -14,12 +14,14 @@ interface UserType {
 }
 const User = () => {
     const [users, setUsers] = useState<UserType[]>([]);
+  const [loading, setLoading] = useState(true);
 
     const theme = useSelector((state: any) => state.theme.theme);
     const isLight = theme === "light";
 
     const getUserData = async () => {
         try {
+              setLoading(true);
             const res = await FETCH({
                 url: "/auth/admin/users",
             });
@@ -30,6 +32,9 @@ const User = () => {
     });
         } catch (error) {
             console.error(error);
+        }
+        finally{
+            setLoading(false)
         }
     };
 
@@ -81,6 +86,15 @@ const User = () => {
         <div
             className={`min-h-screen p-8 ${isLight ? "bg-gray-50 text-gray-900" : "bg-[#0f172a] text-white"
                 }`}>
+
+                          {loading && (
+        <div className="absolute inset-0 flex items-center justify-center backdrop-blur-sm bg-black/10 z-50">
+          <div className="flex flex-col items-center gap-4">
+            <div className="loader"></div>
+            <p className="text-sm opacity-60">Loading user page ...</p>
+          </div>
+        </div>
+      )}
             <header className="mb-8">
                 <h1 className="text-3xl font-bold tracking-tight">Users</h1>
                 <p className={isLight ? "text-gray-500" : "text-slate-400"}>

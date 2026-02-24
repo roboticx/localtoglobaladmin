@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Users, Activity, DollarSign, Globe } from "lucide-react";
+import { Users, Activity, DollarSign, Globe, TrendingUp } from "lucide-react";
 import { FETCH } from "../utils/apiUtils";
 
 interface DashboardData {
@@ -33,15 +33,22 @@ const Dashboard: React.FC = () => {
   const isLight = theme === "light";
 
   const [dashboard, setDashboard] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const getdashboard = async () => {
     try {
+      setLoading(true);
+
       const res = await FETCH({
         url: "/dashboard/admin",
       });
-      setDashboard(res.data);
+
+      setDashboard(res?.data || null);
     } catch (error) {
       console.log(error);
+      setDashboard(null);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -52,7 +59,7 @@ const Dashboard: React.FC = () => {
   const totalRevenue =
     dashboard?.transactions?.recent
       ?.filter((t) => t.status === "SUCCESS")
-      ?.reduce((acc, curr) => acc + curr.amount, 0) || 0;
+      ?.reduce((acc, curr) => acc + (curr.amount || 0), 0) || 0;
 
   const cardStyle = isLight
     ? "bg-white border border-gray-200 shadow-sm hover:shadow-md"
@@ -60,10 +67,20 @@ const Dashboard: React.FC = () => {
 
   return (
     <div
-      className={`min-h-[92vh] p-10 transition-colors duration-300 ${
+      className={`relative min-h-[92vh] p-10 transition-colors duration-300 ${
         isLight ? "bg-gray-50 text-gray-900" : "bg-slate-900 text-slate-100"
       }`}
     >
+      {/* ✅ LOADER OVERLAY */}
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center backdrop-blur-sm bg-black/10 z-50">
+          <div className="flex flex-col items-center gap-4">
+            <div className="loader"></div>
+            <p className="text-sm opacity-60">Loading dashboard...</p>
+          </div>
+        </div>
+      )}
+
       {/* HEADER */}
       <header className="mb-12">
         <h1 className="text-4xl font-semibold tracking-tight">
@@ -76,60 +93,55 @@ const Dashboard: React.FC = () => {
 
       {/* STAT CARDS */}
       <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-4">
-
-        {/* USERS */}
         <div className={`rounded-2xl p-6 transition-all ${cardStyle}`}>
           <div className="flex items-center justify-between">
             <Users size={20} className="text-indigo-400" />
             <span className="text-xs opacity-60">Users</span>
           </div>
           <div className="mt-6 text-3xl font-semibold">
-            {dashboard?.users?.total || 0}
+            {dashboard?.users?.total ?? 0}
           </div>
           <p className="mt-1 text-sm opacity-60">
-            {dashboard?.users?.active || 0} active users
+            {dashboard?.users?.active ?? 0} active users
           </p>
         </div>
 
-        {/* TRANSACTIONS */}
         <div className={`rounded-2xl p-6 transition-all ${cardStyle}`}>
           <div className="flex items-center justify-between">
             <Activity size={20} className="text-indigo-400" />
             <span className="text-xs opacity-60">Transactions</span>
           </div>
           <div className="mt-6 text-3xl font-semibold">
-            {dashboard?.transactions?.total || 0}
+            {dashboard?.transactions?.total ?? 0}
           </div>
           <p className="mt-1 text-sm opacity-60">
-            {dashboard?.transactions?.statusWise?.pending || 0} pending
+            {dashboard?.transactions?.statusWise?.pending ?? 0} pending
           </p>
         </div>
 
-        {/* REVENUE */}
         <div className={`rounded-2xl p-6 transition-all ${cardStyle}`}>
           <div className="flex items-center justify-between">
-            <DollarSign size={20} className="text-indigo-400" />
+            <TrendingUp  size={20} className="text-indigo-400" />
             <span className="text-xs opacity-60">Revenue</span>
           </div>
           <div className="mt-6 text-3xl font-semibold">
             ₹{totalRevenue}
           </div>
           <p className="mt-1 text-sm opacity-60">
-            {dashboard?.transactions?.statusWise?.success || 0} successful payments
+            {dashboard?.transactions?.statusWise?.success ?? 0} successful payments
           </p>
         </div>
 
-        {/* SUBDOMAINS */}
         <div className={`rounded-2xl p-6 transition-all ${cardStyle}`}>
           <div className="flex items-center justify-between">
             <Globe size={20} className="text-indigo-400" />
             <span className="text-xs opacity-60">Subdomains</span>
           </div>
           <div className="mt-6 text-3xl font-semibold">
-            {dashboard?.subdomains?.total || 0}
+            {dashboard?.subdomains?.total ?? 0}
           </div>
           <p className="mt-1 text-sm opacity-60">
-            {dashboard?.subdomains?.status?.active || 0} active instances
+            {dashboard?.subdomains?.status?.active ?? 0} active instances
           </p>
         </div>
       </div>

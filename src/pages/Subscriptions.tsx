@@ -4,6 +4,7 @@ import { FETCH } from '../utils/apiUtils';
 const Subscriptions = () => {
     const [subscription, setSubscription] = useState([])
     const [selectedPlanData, setSelectedPlanData] = useState<any>(null)
+      const [loading, setLoading] = useState(true);
     const [transdata, setTransdata] = useState({
         planid: "",
         modelStat: false
@@ -21,12 +22,23 @@ const Subscriptions = () => {
         } catch (error) {
             console.log(error);
         }
+        finally {
+      setLoading(false);
+    }
     }
     useEffect(() => {
         dataSubscription()
     }, [])
     return (
         <div className={`min-h-screen p-8 ${isLight ? "bg-gray-50 text-gray-900" : "bg-[#0f172a] text-white"}`}>
+           {loading && (
+        <div className="absolute inset-0 flex items-center justify-center backdrop-blur-sm bg-black/10 z-50">
+          <div className="flex flex-col items-center gap-4">
+            <div className="loader"></div>
+            <p className="text-sm opacity-60">Loading subscription page...</p>
+          </div>
+        </div>
+      )}
             <header className="mb-8">
                 <h1 className="text-3xl font-bold tracking-tight">Subscriptions
 </h1>
@@ -46,9 +58,6 @@ const Subscriptions = () => {
                             <th className="px-6 py-3">User</th>
                             <th className="px-6 py-3">Email</th>
                             <th className="px-6 py-3">Role</th>
-                            <th className="px-6 py-3">Plan Name</th>
-                            <th className="px-6 py-3">Price</th>
-                            <th className="px-6 py-3">Duration</th>
                             <th className="px-6 py-3">Active</th>
                             <th className="px-6 py-3 text-center">Action</th>
                         </tr>
@@ -77,18 +86,14 @@ const Subscriptions = () => {
  <td className="px-6 py-4 text-sm font-semibold">
                                         {el.user?.role}
                                     </td>
-                                    <td className="px-6 py-4 text-sm">{planId?.name}</td>
-                                    <td className="px-6 py-4 text-sm">₹{planId?.price}</td>
-                                    <td className="px-6 py-4 text-sm">
-                                        {planId?.durationDays} days
-                                    </td>
+                                  
                                     <td className="px-6 py-4 text-sm">
                                         <span
-                                            className={`px-2 py-1 rounded-full text-xs font-semibold ${planId?.isActive
+                                            className={`px-2 py-1 rounded-full text-xs font-semibold ${el?.user?.isActive
                                                 ? "bg-green-100 text-green-700"
                                                 : "bg-red-100 text-red-600"
                                                 }`}>
-                                            {planId?.isActive ? "True" : "False"}
+                                            {el?.user?.isActive ? "True" : "False"}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-center">
@@ -129,8 +134,8 @@ const Subscriptions = () => {
       <table className="w-full border border-gray-200 rounded-lg text-sm">
         {selectedPlanData?.map((plan: any, index: number) => (
           <tbody key={plan._id}>
-            <tr className="bg-gray-100">
-              <td colSpan={2} className="px-4 py-2 font-semibold">
+            <tr className="bg-purple-600">
+              <td colSpan={2} className="px-4 py-2 text-white font-semibold">
                 Plan #{index + 1}
               </td>
             </tr>

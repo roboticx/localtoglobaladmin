@@ -3,8 +3,9 @@ import { useSelector } from 'react-redux';
 import { FETCH} from '../utils/apiUtils';
 import { IndianRupee } from 'lucide-react';
 const Transactions = () => {
-    const [Transactions, setTransactions] = useState<any>([]);
+    const [Transactions, setTransactions] = useState([]);
     const theme = useSelector((state: any) => state.theme.theme);
+      const [loading, setLoading] = useState(true);
     const isLight = theme === "light";
     const getTransactions = async () => {
         try {
@@ -12,10 +13,12 @@ const Transactions = () => {
                 url: "/transactions/admin",
                 toast: true
             })
-            setTransactions(res.data)
+            setTransactions(res?.data)
         } catch (error) {
             console.log(error);
-        }
+        }finally {
+      setLoading(false);
+    }
     }
     useEffect(() => {
         getTransactions()
@@ -25,6 +28,14 @@ const Transactions = () => {
   className={`min-h-screen p-8 ${
     isLight ? "bg-gray-50 text-gray-900" : "bg-[#0f172a] text-white"
   }`}>
+     {loading && (
+        <div className="absolute inset-0 flex items-center justify-center backdrop-blur-sm bg-black/10 z-50">
+          <div className="flex flex-col items-center gap-4">
+            <div className="loader"></div>
+            <p className="text-sm opacity-60">Loading transaction page...</p>
+          </div>
+        </div>
+      )}
   <header className="mb-8 flex flex-col gap-2">
     <h1 className="text-3xl font-bold tracking-tight">
       Transactions
@@ -70,46 +81,46 @@ const Transactions = () => {
               {idx + 1}
             </td>
             <td className="px-6 py-4 font-medium">
-              {el.user.name}
+              {el?.user?.name}
             </td>
             <td className="px-6 py-4 text-sm opacity-80">
-              {el.user.email}
+              {el?.user?.email}
             </td>
             <td className="px-6 py-4 font-semibold">
-              {el.plan.name}
+              {el?.plan?.name}
             </td>
           <td className="px-6 py-4">
   <div className="flex items-center">
     <IndianRupee size={14} className="text-gray-500" />
-    <span>{el.plan.price}</span>
+    <span>{el?.plan?.price}</span>
   </div>
 </td>
 
 <td className="px-6 py-4 text-center font-semibold">
   <div className="flex items-center justify-center">
     <IndianRupee size={14} className="text-gray-500" />
-    <span>{el.amount}</span>
+    <span>{el?.amount}</span>
   </div>
 </td>
              <td className="px-6 py-4 text-center font-semibold">
-              {el.subscription?`₹ ${el.subscription}`:"N/A"}
+              {el?.subscription?`₹ ${el?.subscription}`:"N/A"}
             </td>
             <td className="px-6 py-4 text-center capitalize">
-              {el.transactionID}
+              {el?.transactionID}
             </td> <td className="px-6 py-4 text-center capitalize">
-              {el.paymentMethod}
+              {el?.paymentMethod}
             </td>
             <td className="px-6 py-4 text-center">
               <span
                 className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                  el.status === "SUCCESS"
+                  el?.status === "SUCCESS"
                     ? "bg-emerald-100 text-emerald-700"
-                    : el.status === "FAILED"
+                    : el?.status === "FAILED"
                     ? "bg-red-100 text-red-700"
-                    :el.status ==="PENDING"?
+                    :el?.status ==="PENDING"?
                     "bg-yellow-100 text-yellow-700":""
                 }`}>
-                {el.status}
+                {el?.status}
               </span>
             </td>
           </tr>

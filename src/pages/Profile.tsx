@@ -3,150 +3,132 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import {
   Mail,
-  MapPin,
   CheckCircle2,
+  Phone,
+  ShieldCheck,
+  Calendar,
+  Settings,
 } from "lucide-react";
 import { FETCH } from "../utils/apiUtils";
 const Profile: React.FC = () => {
   const [user, setUser] = useState({
-    email: "", role: "", isActive: "", name: ""
-  })
-  const [active, setActive] = useState(false);
-
+    email: "", role: "", isActive: "", name: "", mobileNo: ""
+  });
   const theme = useSelector((state: any) => state.theme.theme);
   const isLight = theme === "light";
   const userprofile = async () => {
     try {
       const res = await FETCH({
-        url: "/user/me",
-        toast: true,
-      })
-      setUser(res.user)
+        url: "/auth/user/me",
+      });
+      setUser(res.user);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
   useEffect(() => {
-    userprofile()
-  }, [])
+    userprofile();
+  }, []);
+  const cardBase = `rounded-3xl border transition-all duration-300 hover:shadow-xl ${
+    isLight 
+      ? "bg-white border-gray-100 shadow-sm" 
+      : "bg-slate-900/50 border-white/5 backdrop-blur-xl"
+  }`;
   return (
-    <div
-      className={`min-h-screen ${isLight ? "bg-gray-50 text-gray-900" : "bg-[#0f172a] text-white"
-        }`}>
-      <div className="relative h-64 w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500">
-        <div className="absolute inset-0 bg-black/20" />
+    <div className={`min-h-[92vh] font-sans selection:bg-indigo-500/30 ${
+      isLight ? "bg-[#fcfcfd] text-slate-900" : "bg-[#020617] text-slate-100"
+    }`}>
+      <div className="relative h-72 w-full overflow-hidden">
+        <div className={`absolute inset-0 opacity-40 ${
+          isLight 
+            ? "bg-[radial-gradient(circle_at_top_right,#e0e7ff,transparent)]" 
+            : "bg-[radial-gradient(circle_at_top_right,#1e1b4b,transparent)]"
+        }`} />
+        <div className="absolute bottom-0 h-px w-full bg-linear-to-r from-transparent via-slate-500/20 to-transparent" />
       </div>
-      <div className="mx-auto max-w-5xl px-8">
-        <div className="relative -mt-20 flex flex-col items-end md:flex-row md:items-center md:justify-between">
-          <div className="flex flex-col items-center md:flex-row md:items-end gap-6">
-            <div className="relative">
-              <img
-                 src="https://i.pravatar.cc/300"
-                alt="Avatar"
-                className={`h-40 w-40 rounded-3xl border-4 object-cover shadow-2xl ${isLight
-                    ? "border-gray-50 bg-white"
-                    : "border-[#0f172a] bg-[#1e293b]"
-                  }`} />
-              <div
-                className={`absolute bottom-2 right-2 rounded-full bg-emerald-500 p-1.5 border-4 ${isLight ? "border-gray-50" : "border-[#0f172a]"
-                  }`} >
-                <div className="h-3 w-3 rounded-full bg-white animate-pulse" />
+      <div className="mx-auto max-w-6xl px-6 lg:px-12">
+        <div className="relative -mt-32 flex flex-col items-center md:items-end md:flex-row md:gap-8">
+          <div className="group relative">
+            <div className={`absolute -inset-1 rounded-[2.5rem] bg-linear-to-tr from-indigo-500 to-purple-500 opacity-20 blur transition duration-500 group-hover:opacity-40`} />
+            <img
+              src="https://i.pravatar.cc/300"
+              alt="Avatar"
+              className={`relative h-44 w-44 rounded-[2.2rem] border-8 object-cover shadow-2xl ${
+                isLight ? "border-white" : "border-[#020617]"
+              }`} />
+            {user.isActive === "true" && (
+              <div className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 ring-4 ring-white dark:ring-[#020617]">
+                <div className="h-2.5 w-2.5 rounded-full bg-white animate-pulse" />
               </div>
-            </div>
-            <div className="mb-4 text-center md:text-left">
-              <div className="flex items-center gap-2">
-                <h1 className="text-4xl font-bold tracking-tight">
-                  {user.name}
-                </h1>
-                <CheckCircle2 className="text-indigo-400" size={24} />
-              </div>
-              <p className="text-slate-400 font-medium">
-                {user.role}
-              </p>
-            </div>
+            )}
           </div>
-          <button
-            onClick={() => setActive(!active)}
-            className={`relative mb-4 flex h-11 w-36 items-center rounded-full px-1 transition-all duration-300 active:scale-95 shadow-lg
-        ${isLight
-                ? "bg-gray-200 shadow-gray-300"
-                : "bg-slate-700 shadow-black/40"
-              }`}
-          >
-            <span
-              className={`absolute left-1 top-1 h-9 w-16 rounded-full transition-all duration-300 ease-in-out
-          ${active
-                  ? "translate-x-[68px] bg-indigo-600"
-                  : "translate-x-0 bg-gray-400"
-                }`}
-            />
-            <span
-              className={`relative z-10 flex-1 text-sm font-semibold transition-colors duration-300
-          ${!active ? "text-white" : "text-gray-500"}`}
-            >
-              OFF
-            </span>
-            <span
-              className={`relative z-10 flex-1 text-sm font-semibold transition-colors duration-300
-          ${active ? "text-white" : "text-gray-500"}`}
-            >
-              ON
-            </span>
-          </button>
+          <div className="mt-6 flex-1 text-center md:mb-4 md:text-left">
+            <div className="flex items-center justify-center gap-3 md:justify-start">
+              <h1 className="text-5xl font-extrabold tracking-tighter">
+                {user.name || "Loading..."}
+              </h1>
+              <CheckCircle2 className="text-indigo-500" size={28} />
+            </div>
+            <p className="mt-2 text-lg font-medium text-slate-500 dark:text-slate-400">
+              {user.role}
+            </p>
+          </div>
+          <div className="mt-6 flex gap-3 md:mb-6">
+            <button className={`flex items-center gap-2 rounded-2xl px-6 py-2.5 text-sm font-semibold transition-all hover:scale-105 active:scale-95 ${
+              isLight ? "bg-slate-900 text-white" : "bg-white text-slate-900"
+            }`}>
+              <Settings size={16} /> Edit Profile
+            </button>
+          </div>
         </div>
-        <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-3 pb-12">
-          <div className="space-y-6">
-            <div
-              className={`rounded-2xl border p-6 backdrop-blur-sm ${isLight
-                  ? "bg-white border-gray-200"
-                  : "bg-white/5 border-white/5"
-                }`}>
-              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-500">
-                About
-              </h3>
-              <ul className="space-y-4">
-                <li className="flex items-center gap-3">
-                  <Mail size={18} className="text-indigo-400" />
-                  {user.email}
-                </li>
-                <li className="flex items-center gap-3">
-                  <MapPin size={18} className="text-indigo-400" />
-                  {user.isActive === "true" ? "Active" : "Inactive"}
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="lg:col-span-2 space-y-6">
-            <div
-              className={`rounded-2xl border p-8 ${isLight
-                  ? "bg-white border-gray-200"
-                  : "bg-white/5 border-white/5"
-                }`}>
-              <h3 className="mb-6 text-xl font-bold">Recent Activity</h3>
-              <div className="space-y-6">
-                {[1, 2, 3].map((_, i) => (
-                  <div
-                    key={i}
-                    className="flex gap-4 border-l-2 border-indigo-500/30 pl-6 relative">
-                    <div
-                      className={`absolute -left-[9px] top-0 h-4 w-4 rounded-full border-2 border-indigo-500 ${isLight ? "bg-white" : "bg-[#0f172a]"
-                        }`} />
-                    <div>
-                      <p className="font-medium">
-                        Deployed "Nexus Dashboard v2.0" to production
-                      </p>
-                      <p className="text-xs text-slate-500 mt-1">
-                        2 hours ago
-                      </p>
-                    </div>
+        <div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-3 pb-20">
+          <div className={`${cardBase} md:col-span-2 p-8`}>
+            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-500 mb-8">
+              Personal Information
+            </h3>            
+            <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
+              <div className="space-y-1">
+                <span className="text-sm text-slate-400">Email Address</span>
+                <div className="flex items-center gap-3 font-medium">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-500">
+                    <Mail size={18} />
                   </div>
-                ))}
+                  {user.email}
+                </div>
+              </div>
+              <div className="space-y-1">
+                <span className="text-sm text-slate-400">Mobile Number</span>
+                <div className="flex items-center gap-3 font-medium">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/10 text-purple-500">
+                    <Phone size={18} />
+                  </div>
+                  {user.mobileNo || "Not provided"}
+                </div>
+              </div>
+              <div className="space-y-1">
+                <span className="text-sm text-slate-400">Account Status</span>
+                <div className="flex items-center gap-3 font-medium">
+                  <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${
+                    user.isActive === "true" ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500"
+                  }`}>
+                    <ShieldCheck size={18} />
+                  </div>
+                  {user.isActive === "true" ? "Verified Elite" : "Pending Verification"}
+                </div>
+              </div>
+              <div className="space-y-1">
+                <span className="text-sm text-slate-400">Member Since</span>
+                <div className="flex items-center gap-3 font-medium">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-500">
+                    <Calendar size={18} />
+                  </div>
+                  February 2024
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      
     </div>
   );
 };

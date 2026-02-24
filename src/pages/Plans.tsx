@@ -17,6 +17,7 @@ const Plans = () => {
     const [plans, setPlans] = useState<Plan[]>([]);
     const [isOpen, setIsOpen] = useState(false);
     const [editId, setEditId] = useState<string | null>(null);
+      const [loading, setLoading] = useState(true);
     const [plansData, setPlansData] = useState({
         name: "",
         price: "",
@@ -24,10 +25,12 @@ const Plans = () => {
         offerPriceMonthly: "",
         offerPriceAnnual: ""
     })
+    
     const theme = useSelector((state: any) => state.theme.theme);
     const isLight = theme === "light";
     const getplans = async () => {
         try {
+            setLoading(true);
             const res = await FETCH({
                 url: "/plans",
                 toast: true
@@ -35,6 +38,9 @@ const Plans = () => {
             setPlans(res.data)
         } catch (error) {
             console.log(error);
+        }
+        finally{
+            setLoading(false);
         }
     }
     const submitPlan = async () => {
@@ -46,7 +52,7 @@ const Plans = () => {
                 offerPriceMonthly: plansData.offerPriceMonthly,
                 offerPriceAnnual: plansData.offerPriceAnnual
             };
-
+            console.log(formattedData)
             if (editId) {
                 await PATCH({
                     url: `/plans/admin/${editId}`,
@@ -127,6 +133,14 @@ const Plans = () => {
         <div
             className={`min-h-screen p-8 ${isLight ? "bg-gray-50 text-gray-900" : "bg-[#0f172a] text-white"
                 }`}>
+                     {loading && (
+        <div className="absolute inset-0 flex items-center justify-center backdrop-blur-sm bg-black/10 z-50">
+          <div className="flex flex-col items-center gap-4">
+            <div className="loader"></div>
+            <p className="text-sm opacity-60">Loading plans...</p>
+          </div>
+        </div>
+      )}
             <header className="mb-8">
                 <h1 className="text-3xl font-bold tracking-tight">Plan's</h1>
                 <div className='flex justify-between'>
